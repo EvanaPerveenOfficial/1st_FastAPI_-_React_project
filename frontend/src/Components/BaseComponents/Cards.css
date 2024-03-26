@@ -34,3 +34,52 @@
     font-size: 16px;
     color: #333;
 }
+
+.card-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.edit-button,
+.add-to-cart-button {
+    flex: 1;
+    padding: 8px 16px;
+    margin-left: 5px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f38181;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+
+}
+
+.edit-button:hover,
+.add-to-cart-button:hover {
+    background-color: #e65e5e;
+}
+
+
+.card-image-container {
+    position: relative;
+}
+
+.delete-icon-button {
+    position: absolute;
+    top: 7px;
+    right: 15px;
+    background-color: transparent;
+    border: none;
+    color: #e65e5e;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    visibility: hidden;
+    font-size: 20px;
+}
+
+.card:hover .delete-icon-button {
+    visibility: visible;
+}

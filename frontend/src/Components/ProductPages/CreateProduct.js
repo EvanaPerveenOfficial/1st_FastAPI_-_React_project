@@ -14,11 +14,32 @@ const CreateProduct = ({ onCreate }) => {
     const [description, setDescription] = useState("")
     const [price, setPrice] = useState("")
     const [imageUrl, setImageUrl] = useState("")
+    const [errors, setErrors] = useState({});
     
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
+    // Validation checks
+    const errors = {};
+    if (!name.trim()) {
+        errors.name = "Product name is required";
+    }
+    if (!price.trim()) {
+        errors.price = "Price is required";
+    } else if (isNaN(Number(price))) {
+        errors.price = "Price must be a number";
+    }
+
+    // If there are validation errors, update the state and prevent form submission
+    if (Object.keys(errors).length > 0) {
+        setErrors(errors);
+        return;
+    }
+
+
     let formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
