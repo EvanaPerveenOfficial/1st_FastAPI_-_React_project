@@ -1,0 +1,36 @@
+.cards {
+    width: 88%;
+    top: 0px;
+    position:fixed;
+    height: 90vh;
+    float: right;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    top: 100px;
+    left: 12%;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.card {
+    width: 300px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 16px;
+    color: #333;
+}

@@ -1,0 +1,28 @@
+.add-button {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 60px;
+    height: 60px;
+    border-radius: 0% 30% 0% 30%;
+    background-color: #e65e5e;
+    color: white;
+    font-size: 45px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-button:hover {
+    border-radius: 50%;
+    font-size: 50px;
+  }
+  
+  .add-button:focus {
+    outline: none;
+  }
+  
