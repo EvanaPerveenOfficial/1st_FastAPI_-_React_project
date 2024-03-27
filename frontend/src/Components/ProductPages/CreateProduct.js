@@ -36,6 +36,7 @@ const CreateProduct = ({ onCreate }) => {
     // If there are validation errors, update the state and prevent form submission
     if (Object.keys(errors).length > 0) {
         setErrors(errors);
+        console(errors);
         return;
     }
 

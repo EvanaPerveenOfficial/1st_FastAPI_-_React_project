@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Cards.css';
 import alt_img from'../../assets/images/alt_image.png';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 
 
 
 const Cards = ({ cards, onDelete }) => {
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const deleteProduct = async (productId) => {
         try {

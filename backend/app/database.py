@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 import os
 
+
+
 load_dotenv()
 
 # Define the database URL using environment variables
@@ -13,6 +15,7 @@ DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 URL_DATABASE = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_DATABASE}'
+
 
 # Create the SQLAlchemy engine
 engine = create_engine(URL_DATABASE)

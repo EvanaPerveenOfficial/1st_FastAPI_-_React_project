@@ -19,7 +19,7 @@ const Sidebar = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/create">
+                        <Link to="/create-product">
                             <span className="icon">
                                 <i className="fas fa-plus"></i>
                             </span>
@@ -62,6 +62,16 @@ const Sidebar = () => {
                             </span>
                         </Link>
                     </li>
+                    <>
+                        <li>
+                            <Link to="/sign-up" style={{color: '#ffcc',}}>
+                                <span className="icon">
+                                    <i className="fas fa-user-plus"></i>
+                                </span>
+                                Register
+                            </Link>
+                        </li>
+                    </>
                 </ul>
             </nav>
         </aside>
