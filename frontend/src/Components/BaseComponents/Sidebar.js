@@ -12,7 +12,7 @@ const Sidebar = () => {
                             <span className="icon">
                                 <i className="fas fa-home"></i>
                             </span>
-                            ||  Home
+                            || &nbsp; Home
                             <span className="arrow-icon">
                                 <i className="fas fa-chevron-right"></i>
                             </span>
@@ -23,7 +23,7 @@ const Sidebar = () => {
                             <span className="icon">
                                 <i className="fas fa-plus"></i>
                             </span>
-                            ||  Create
+                            || &nbsp; Create
                             <span className="arrow-icon">
                                 <i className="fas fa-chevron-right"></i>
                             </span>
@@ -34,7 +34,7 @@ const Sidebar = () => {
                             <span className="icon">
                                 <i className="fas fa-shopping-cart"></i>
                             </span>
-                            ||  Products
+                            || &nbsp; Products
                             <span className="arrow-icon">
                                 <i className="fas fa-chevron-right"></i>
                             </span>
@@ -45,7 +45,7 @@ const Sidebar = () => {
                             <span className="icon">
                                 <i className="fas fa-info-circle"></i>
                             </span>
-                            ||  About
+                            || &nbsp; About
                             <span className="arrow-icon">
                                 <i className="fas fa-chevron-right"></i>
                             </span>
@@ -56,22 +56,29 @@ const Sidebar = () => {
                             <span className="icon">
                                 <i className="fas fa-envelope"></i>
                             </span>
-                            ||  Contact
+                            || &nbsp; Contact
                             <span className="arrow-icon">
                                 <i className="fas fa-chevron-right"></i>
                             </span>
                         </Link>
                     </li>
-                    <>
+                    
+                    <div className="auth_btn">
+                        <hr/>
+                        <hr/>
+                        <hr/>
                         <li>
-                            <Link to="/sign-up" style={{color: '#ffcc',}}>
+                            <Link to="/sign-up">
                                 <span className="icon">
                                     <i className="fas fa-user-plus"></i>
                                 </span>
                                 Register
                             </Link>
                         </li>
-                    </>
+                        <hr/>
+                        <hr/>
+                        <hr/>
+                    </div>
                 </ul>
             </nav>
         </aside>

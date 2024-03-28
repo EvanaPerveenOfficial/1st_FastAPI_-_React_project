@@ -14,7 +14,7 @@ const CreateProduct = ({ onCreate }) => {
     const [description, setDescription] = useState("")
     const [price, setPrice] = useState("")
     const [imageUrl, setImageUrl] = useState("")
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState({});
     
 
 
@@ -33,10 +33,9 @@ const CreateProduct = ({ onCreate }) => {
         errors.price = "Price must be a number";
     }
 
-    // If there are validation errors, update the state and prevent form submission
     if (Object.keys(errors).length > 0) {
-        setErrors(errors);
-        console(errors);
+        setError(errors);
+        console(error);
         return;
     }
 
