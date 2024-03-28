@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.sqlalchemy_models import Product
 from app.schemas.models import Product as ProductSchema
+from app.oauth2 import get_current_user
 from fastapi import Form
 
 router = APIRouter()
@@ -17,7 +18,9 @@ def get_db():
 
 
 @router.post("/products/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED, tags=['Products'])
-def create_product(name: str = Form(...), description: str = Form(...), price: int = Form(...), image_url: str = Form(...), db: Session = Depends(get_db)):
+def create_product(name: str = Form(...), description: str = Form(...), price: int = Form(...), image_url: str = Form(...), 
+                   db: Session = Depends(get_db), 
+                   user_id: int = Depends(get_current_user)):
     product_data = {"name": name, "description": description, "price": price, "image_url": image_url}
     product = Product(**product_data)
     db.add(product)
