@@ -3,10 +3,12 @@ import './EditProduct.css';
 import Header from '../BaseComponents/Header';
 import Sidebar from '../BaseComponents/Sidebar';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 const EditProduct = () => {
     const { productId } = useParams();
     const navigate = useNavigate();
+    const [token] = useCookies(['myToken']);
 
     const [productData, setProductData] = useState({
         name: '',
@@ -22,13 +24,22 @@ const EditProduct = () => {
 
     const fetchProductData = async (productId) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/products/${productId}`);
-            const data = await response.json();
-            setProductData(data);
+            const response = await fetch(`http://localhost:8000/api/products/${productId}`, {
+                headers: {
+                    Authorization: `Bearer ${token.myToken}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setProductData(data);
+            } else {
+                console.error('Error fetching product data:', response.statusText);
+            }
         } catch (error) {
             console.error('Error fetching product data:', error);
         }
     };
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -44,7 +55,8 @@ const EditProduct = () => {
             const response = await fetch(`http://localhost:8000/api/products/${productId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token.myToken}`
                 },
                 body: JSON.stringify(productData)
             });

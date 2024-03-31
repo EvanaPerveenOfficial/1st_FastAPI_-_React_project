@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import './CreateUser.css';
+import './LoginUser.css';
 import { Link, useNavigate } from 'react-router-dom'; 
+import { useCookies } from 'react-cookie';
 import Swal from 'sweetalert2'; 
 
 import gif_img from '../../assets/images/hi_there.gif';
 
-const CreateUser = () => {
+const LoginUser = () => {
 
     let navigate = useNavigate();
+
+    const [token, setToken] = useCookies(['myToken'])
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -34,8 +37,6 @@ const CreateUser = () => {
             return;
         }
 
-
-
         let formData = new FormData();
         formData.append('email', email);
         formData.append('password', password)
@@ -48,51 +49,50 @@ const CreateUser = () => {
         
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/auth/create-user/', requestOption);
+            const response = await fetch('http://127.0.0.1:8000/auth/login/', requestOption);
             const responseData = await response.text();
             const jsonResponse = JSON.parse(responseData);
-            console.log('success', jsonResponse);
+            console.log('success !!!');
+            setToken('myToken', jsonResponse.access_token);
             Swal.fire({
-              icon: 'success',
-              title: 'Login successful!',
-              showConfirmButton: false,
-              timer: 1500
-          });
+                icon: 'success',
+                title: 'Login successful!',
+                showConfirmButton: false,
+                timer: 1500
+            });
             navigate('/');
         } catch (error) {
             console.log('Error: ', error);
         }
-
-    
     };
 
-  return (
-    <div className="create-user-container">
-        <img src={gif_img} alt='ecom' height="280px" width="450px" className='imageClass' />
-      <h2>SignUp Here</h2>
-      <form onSubmit={handleSubmit} className="create-user-form">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
-        <button type="submit">Create User</button>
-      </form>
-      <p>
-        Already have an account ? {" "}
-        <Link to="/login"> Sign in here</Link> 
-      </p>
-    </div>
-  );
+    return (
+        <div className="login-user-container">
+            <img src={gif_img} alt='login' height="280px" width="450px" className='imageClass' />
+            <h2>Login Here</h2>
+            <form onSubmit={handleSubmit} className="login-user-form">
+                <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                required
+                />
+                <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                required
+                />
+                <button type="submit">Login</button>
+            </form>
+            <p>
+                Don't have an account? {" "}
+                <Link to="/sign-up"> Sign up here</Link>
+            </p>
+        </div>
+    );
 };
 
-export default CreateUser;
+export default LoginUser;

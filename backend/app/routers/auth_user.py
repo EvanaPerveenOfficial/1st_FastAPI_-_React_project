@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.sqlalchemy_models import User
-from app.schemas.auth_models import UserCreate, UserLogin
+from app.schemas.auth_models import UserCreate
 from fastapi import Form
 from app.utils import hash_password, verify_password
 from ..oauth2 import create_access_token
@@ -11,13 +11,6 @@ from ..oauth2 import create_access_token
 router = APIRouter()
 
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post('/create-user', status_code=status.HTTP_201_CREATED, tags=['Authentication'], response_model=UserCreate)

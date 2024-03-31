@@ -8,6 +8,8 @@ from app.cors import cors_middleware
 from dotenv import load_dotenv
 
 
+
+
 load_dotenv()
 
 

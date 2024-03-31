@@ -1,8 +1,24 @@
 import React from 'react';
 import './Sidebar.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useCookies } from 'react-cookie';
 
 const Sidebar = () => {
+
+    const [token, , removeToken] = useCookies(['myToken']);
+    const navigate = useNavigate();
+
+
+
+    const logoutSubmitted = () => {
+        removeToken('myToken');
+        navigate('/');
+      };
+
+
+
+
     return (
         <aside className="sidebar">
             <nav>
@@ -63,22 +79,39 @@ const Sidebar = () => {
                         </Link>
                     </li>
                     
-                    <div className="auth_btn">
-                        <hr/>
-                        <hr/>
-                        <hr/>
+                    {token.myToken ? (
+                        <div className="auth_btn">
+                        <hr />
+                        <hr />
+                        <hr />
                         <li>
-                            <Link to="/sign-up">
-                                <span className="icon">
-                                    <i className="fas fa-user-plus"></i>
-                                </span>
-                                Register
-                            </Link>
+                            <span className="icon">
+                                <i className="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span onClick={logoutSubmitted}>Log Out</span>
                         </li>
-                        <hr/>
-                        <hr/>
-                        <hr/>
-                    </div>
+                            <hr />
+                            <hr />
+                            <hr />
+                        </div>
+                    ) : (
+                        <div className="auth_btn">
+                            <hr />
+                            <hr />
+                            <hr />
+                            <li>
+                                <Link to="/login">
+                                    <span className="icon">
+                                        <i className="fas fa-user"></i>
+                                    </span>
+                                    Log In
+                                </Link>
+                            </li>
+                            <hr />
+                            <hr />
+                            <hr />
+                        </div>
+                    )}
                 </ul>
             </nav>
         </aside>

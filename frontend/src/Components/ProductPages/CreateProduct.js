@@ -4,11 +4,14 @@ import Header from '../BaseComponents/Header';
 import Sidebar from '../BaseComponents/Sidebar';
 import gif_img from '../../assets/images/ecom_gif.gif';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 const CreateProduct = ({ onCreate }) => {
 
 
     let navigate = useNavigate();
+
+    const [token] = useCookies(['myToken']);
 
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
@@ -22,7 +25,6 @@ const CreateProduct = ({ onCreate }) => {
     e.preventDefault();
 
 
-    // Validation checks
     const errors = {};
     if (!name.trim()) {
         errors.name = "Product name is required";
@@ -49,6 +51,9 @@ const CreateProduct = ({ onCreate }) => {
 
     let requestOption = {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token.myToken}`,
+      },
         body: formData,
         redirect: "follow"
     };

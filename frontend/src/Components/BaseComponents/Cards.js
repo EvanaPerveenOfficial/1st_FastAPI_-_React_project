@@ -2,15 +2,8 @@ import React from 'react';
 import './Cards.css';
 import alt_img from'../../assets/images/alt_image.png';
 import { Link } from 'react-router-dom';
-// import { useNavigate } from 'react-router-dom';
-
-
-
 
 const Cards = ({ cards, onDelete }) => {
-
-    // const navigate = useNavigate();
-
     const deleteProduct = async (productId) => {
         try {
             const response = await fetch(`http://localhost:8000/api/products/${productId}`, {
@@ -20,10 +13,8 @@ const Cards = ({ cards, onDelete }) => {
                 },
             });
             if (response.ok) {
-
                 onDelete();
-                console.log("Successfull");
-
+                console.log("Successful");
             } else {
                 console.error('Failed to delete product:', response.statusText);
             }
@@ -32,6 +23,9 @@ const Cards = ({ cards, onDelete }) => {
         }
     };
 
+    if (!Array.isArray(cards)) {
+        return <p className="no-products-message">Currently no product is available</p>;
+    }
 
     return (
         <div className="cards">

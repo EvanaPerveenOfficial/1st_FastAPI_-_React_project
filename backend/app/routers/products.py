@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.sqlalchemy_models import Product
 from app.schemas.models import Product as ProductSchema
 from app.oauth2 import get_current_user
@@ -8,13 +8,6 @@ from fastapi import Form
 
 router = APIRouter()
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post("/products/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED, tags=['Products'])
@@ -32,13 +25,15 @@ def create_product(name: str = Form(...), description: str = Form(...), price: i
 
 
 @router.get("/products/", response_model=list[ProductSchema], tags=['Products'])
-def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
+                  user_id: int = Depends(get_current_user)):
     products = db.query(Product).order_by(Product.id).offset(skip).limit(limit).all()
     return products
 
 
 @router.get("/products/{product_id}", response_model=ProductSchema, tags=['Products'])
-def read_product(product_id: int, db: Session = Depends(get_db)):
+def read_product(product_id: int, db: Session = Depends(get_db), 
+    user_id: int = Depends(get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -46,12 +41,13 @@ def read_product(product_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/products/{product_id}", response_model=ProductSchema, tags=['Products'])
-def update_product(product_id: int, product: ProductSchema, db: Session = Depends(get_db)):
+def update_product(product_id: int, product: ProductSchema, db: Session = Depends(get_db),
+                   user_id: int = Depends(get_current_user)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    # Update the fields of the product using the data from the request body
+
     db_product.name = product.name
     db_product.description = product.description
     db_product.price = product.price
@@ -63,7 +59,8 @@ def update_product(product_id: int, product: ProductSchema, db: Session = Depend
 
 
 @router.delete("/products/{product_id}", tags=['Products'])
-def delete_product(product_id: int, db: Session = Depends(get_db)):
+def delete_product(product_id: int, db: Session = Depends(get_db),
+                   user_id: int = Depends(get_current_user)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
