@@ -4,7 +4,7 @@ from app.database import get_db
 from app.models.sqlalchemy_models import Product
 from app.schemas.models import Product as ProductSchema
 from app.oauth2 import get_current_user
-from fastapi import Form
+from fastapi import Form, Request
 
 router = APIRouter()
 
@@ -25,8 +25,10 @@ def create_product(name: str = Form(...), description: str = Form(...), price: i
 
 
 @router.get("/products/", response_model=list[ProductSchema], tags=['Products'])
-def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
+def read_products(request: Request, skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
                   user_id: int = Depends(get_current_user)):
+    headers = dict(request.headers)
+    print("Request Headers:", headers) 
     products = db.query(Product).order_by(Product.id).offset(skip).limit(limit).all()
     return products
 

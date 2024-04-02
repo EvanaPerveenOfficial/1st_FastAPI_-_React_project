@@ -18,7 +18,6 @@ const EditProduct = () => {
     });
 
     useEffect(() => {
-        // Fetch product data by productId and update the state
         fetchProductData(productId);
     }, [productId]);
 
@@ -49,7 +48,6 @@ const EditProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Perform validation checks
 
         try {
             const response = await fetch(`http://localhost:8000/api/products/${productId}`, {

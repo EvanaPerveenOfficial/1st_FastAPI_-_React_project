@@ -10,7 +10,7 @@ const LoginUser = () => {
 
     let navigate = useNavigate();
 
-    const [token, setToken] = useCookies(['myToken'])
+    const [role, setRole] = useCookies(['role'])
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -53,7 +53,8 @@ const LoginUser = () => {
             const responseData = await response.text();
             const jsonResponse = JSON.parse(responseData);
             console.log('success !!!');
-            setToken('myToken', jsonResponse.access_token);
+            
+            setRole('role', jsonResponse.role);
             Swal.fire({
                 icon: 'success',
                 title: 'Login successful!',

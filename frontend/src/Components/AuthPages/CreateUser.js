@@ -11,6 +11,7 @@ const CreateUser = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,7 +39,8 @@ const CreateUser = () => {
 
         let formData = new FormData();
         formData.append('email', email);
-        formData.append('password', password)
+        formData.append('password', password);
+        formData.append('role', role);
 
         let requestOption = {
             method: 'POST',
@@ -58,7 +60,7 @@ const CreateUser = () => {
               showConfirmButton: false,
               timer: 1500
           });
-            navigate('/');
+            navigate('/login');
         } catch (error) {
             console.log('Error: ', error);
         }
@@ -85,6 +87,26 @@ const CreateUser = () => {
           placeholder="Password"
           required
         />
+        <div>
+            <label>
+                <input
+                    type="checkbox"
+                    value="admin"
+                    checked={role === 'admin'}
+                    onChange={() => setRole('admin')}
+                />
+                Admin
+            </label>
+            <label>
+                <input
+                    type="checkbox"
+                    value="client"
+                    checked={role === 'client'}
+                    onChange={() => setRole('client')}
+                />
+                Client
+            </label>
+        </div>
         <button type="submit">Create User</button>
       </form>
       <p>
