@@ -6,6 +6,7 @@ import AddButton from '../Buttons/AddButton';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
+
     const [cards, setAllCards] = useState([]);
     const [reload, setReload] = useState(false);
 

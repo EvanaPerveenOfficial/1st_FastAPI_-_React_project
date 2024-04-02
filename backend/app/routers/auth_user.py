@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.sqlalchemy_models import User
@@ -55,7 +55,7 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
     
     access_token = create_access_token(data={"user_id": user.id})
     
-    response_content = {'token_type': 'bearer', 'role': user.role}
+    response_content = {'token_type': 'bearer', 'role': user.role, 'token': access_token}
     
     response = Response(content=json.dumps(response_content), media_type='application/json')
     
@@ -64,7 +64,7 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
         value=access_token,
         httponly=True,
         secure=False,
-        samesite=None, 
+        samesite='lax', 
         max_age=1800,
     )
     
