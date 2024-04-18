@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app: 
+    image: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+
+    depends_on:
+      - db
+    restart: on-failure
+    
+
+
+  db:
+    image: postgres:latest
+    environment:
+      - USER: 
+      - DB_NAME:
+      - DB_PASSWORD:
+      - USER_PASSWORD: 
+    volumes:
+      - ${PWD}/app/db : /etc/postgresql/16/main

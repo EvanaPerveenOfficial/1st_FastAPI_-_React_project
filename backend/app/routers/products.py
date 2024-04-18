@@ -3,17 +3,21 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.sqlalchemy_models import Product
 from app.schemas.models import Product as ProductSchema
-from app.oauth2 import get_current_user
+from app.oauth2 import get_current_user, get_current_user_role
 from fastapi import Form, Request
 
 router = APIRouter()
 
 
 
-@router.post("/products/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED, tags=['Products'])
+@router.post("/products/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED, tags=['Products'], description="This will create a new product")
 def create_product(name: str = Form(...), description: str = Form(...), price: int = Form(...), image_url: str = Form(...), 
                    db: Session = Depends(get_db), 
-                   user_id: int = Depends(get_current_user)):
+                   user_role: str = Depends(get_current_user_role)):
+    if user_role != "admin":
+        print("role: ", user_role)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+
     product_data = {"name": name, "description": description, "price": price, "image_url": image_url}
     product = Product(**product_data)
     db.add(product)
@@ -25,10 +29,10 @@ def create_product(name: str = Form(...), description: str = Form(...), price: i
 
 
 @router.get("/products/", response_model=list[ProductSchema], tags=['Products'])
-def read_products(request: Request, skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
+def read_products(request: Request, skip: int = 0, limit: int = 25, db: Session = Depends(get_db),
                   user_id: int = Depends(get_current_user)):
-    headers = dict(request.headers)
-    print("Request Headers:", headers) 
+    # headers = dict(request.headers)
+    # print("Request Headers:", headers) 
     products = db.query(Product).order_by(Product.id).offset(skip).limit(limit).all()
     return products
 
@@ -44,7 +48,10 @@ def read_product(product_id: int, db: Session = Depends(get_db),
 
 @router.put("/products/{product_id}", response_model=ProductSchema, tags=['Products'])
 def update_product(product_id: int, product: ProductSchema, db: Session = Depends(get_db),
-                   user_id: int = Depends(get_current_user)):
+                   user_role: str = Depends(get_current_user_role)):
+    if user_role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+    
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -62,7 +69,10 @@ def update_product(product_id: int, product: ProductSchema, db: Session = Depend
 
 @router.delete("/products/{product_id}", tags=['Products'])
 def delete_product(product_id: int, db: Session = Depends(get_db),
-                   user_id: int = Depends(get_current_user)):
+                   user_role: str = Depends(get_current_user_role)):
+    if user_role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+    
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")

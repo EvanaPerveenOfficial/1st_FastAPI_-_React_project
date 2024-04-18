@@ -53,18 +53,18 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
     if not verify_password(password, user.password):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     
-    access_token = create_access_token(data={"user_id": user.id})
+    access_token = create_access_token(data={"user_id": user.id, "role": user.role})
+    print('result: ',access_token)
     
-    response_content = {'token_type': 'bearer', 'role': user.role, 'token': access_token}
+    response_content = {'Status': 'Successfully Logged In!!!'}
     
     response = Response(content=json.dumps(response_content), media_type='application/json')
     
     response.set_cookie(
-        key="access_token",
+        key="token",
         value=access_token,
         httponly=True,
-        secure=False,
-        samesite='lax', 
+        secure=True,
         max_age=1800,
     )
     

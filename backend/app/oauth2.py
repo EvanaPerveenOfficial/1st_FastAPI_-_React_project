@@ -1,7 +1,7 @@
 from jose import JOSEError, jwt
 from datetime import datetime, timedelta
 from app.schemas.auth_models import TokenData
-from fastapi import Depends, status, HTTPException
+from fastapi import Depends, Request, status, HTTPException, Cookie
 from fastapi.security import HTTPBearer
 from dotenv import load_dotenv
 import os
@@ -12,7 +12,7 @@ bearer_scheme = HTTPBearer()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 180
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -21,17 +21,31 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def verify_access_token(token: str, credential_exception):
+
+def get_token_data(token: str = Cookie("token", secure=True, httponly=True),) -> TokenData:
+    # token = request.cookies.get("access_token")
+    print("token: ", token)
+    # if not token:
+    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not authenticated!!!", headers={'WWW-Authenticate': 'Bearer'})
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id: str = str(payload.get('user_id'))
-        if id is None:
-            raise credential_exception
-        token_data = TokenData(id=id)
-    except JOSEError:
-        raise credential_exception
-    return token_data
+        id = str(payload.get('user_id'))
+        print(id)
+        role = str(payload.get('role'))
+        if not id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={'WWW-Authenticate': 'Bearer'})
+        return TokenData(id=id, role=role)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired", headers={'WWW-Authenticate': 'Bearer'})
+    except jwt.JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={'WWW-Authenticate': 'Bearer'})
 
-def get_current_user(token: str = Depends(bearer_scheme)):
-    credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={'WWW-Authenticate': 'Bearer'})
-    return verify_access_token(token.credentials, credential_exception)
+
+
+def get_current_user(token: TokenData = Depends(get_token_data)):
+    return token.id
+
+
+
+def get_current_user_role(token_data: TokenData = Depends(get_token_data)):
+    return token_data.role

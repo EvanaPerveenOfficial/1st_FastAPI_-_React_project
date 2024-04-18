@@ -34,6 +34,7 @@ class Token(BaseModel):
     
 class TokenData(BaseModel):
     id: Optional[str] = None
+    role: Optional[str] = None
     
     class Config:
         from_attributes = True

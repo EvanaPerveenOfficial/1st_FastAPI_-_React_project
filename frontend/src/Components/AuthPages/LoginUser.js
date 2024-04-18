@@ -4,13 +4,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import Swal from 'sweetalert2'; 
 
+
+
+
 import gif_img from '../../assets/images/hi_there.gif';
 
 const LoginUser = () => {
 
     let navigate = useNavigate();
 
-    const [role, setRole] = useCookies(['role'])
+
+    const [role, setRole] = useCookies(['role']);
+    const [token] = useCookies(['myToken']);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,17 +49,21 @@ const LoginUser = () => {
         let requestOption = {
             method: 'POST',
             body: formData,
-            redirect: 'follow'
+            redirect: 'follow',
+            credentials: "include", 
         }
         
 
         try {
             const response = await fetch('http://127.0.0.1:8000/auth/login/', requestOption);
             const responseData = await response.text();
+            const cookie = response.headers.get('Set-Cookie');
+            console.log(cookie);
             const jsonResponse = JSON.parse(responseData);
             console.log('success !!!');
             
             setRole('role', jsonResponse.role);
+            setRole('myToken', jsonResponse.token);
             Swal.fire({
                 icon: 'success',
                 title: 'Login successful!',
