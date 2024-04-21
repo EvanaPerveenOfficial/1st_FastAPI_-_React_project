@@ -1,7 +1,7 @@
-from jose import JOSEError, jwt
+from jose import jwt
 from datetime import datetime, timedelta
 from app.schemas.auth_models import TokenData
-from fastapi import Depends, Request, status, HTTPException, Cookie
+from fastapi import Depends, status, HTTPException, Cookie
 from fastapi.security import HTTPBearer
 from dotenv import load_dotenv
 import os

@@ -1,24 +1,31 @@
 version: '3.8'
 
 services:
-  app: 
-    image: 
+  app:
+    build: 
       context: .
-      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
     environment:
-
+      - DB_URL=postgresql://postgres:marmaidarmy@postgres:5432/fastapi
     depends_on:
-      - db
+      - database
     restart: on-failure
-    
 
 
-  db:
-    image: postgres:latest
+  database:
+    image: postgres
+    container_name: postgres
+    ports:
+      - 5435:5432
+
     environment:
-      - USER: 
-      - DB_NAME:
-      - DB_PASSWORD:
-      - USER_PASSWORD: 
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=marmaidarmy
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ${PWD}/app/db : /etc/postgresql/16/main
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
