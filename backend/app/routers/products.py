@@ -8,15 +8,16 @@ from fastapi import Form, Request
 
 router = APIRouter()
 
+def admin_check(user_role: str = Depends(get_current_user_role)):
+    if user_role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+
 
 
 @router.post("/products/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED, tags=['Products'], description="This will create a new product")
 def create_product(name: str = Form(...), description: str = Form(...), price: int = Form(...), image_url: str = Form(...), 
                    db: Session = Depends(get_db), 
-                   user_role: str = Depends(get_current_user_role)):
-    if user_role != "admin":
-        print("role: ", user_role)
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+                   admin: None = Depends(admin_check)):
 
     product_data = {"name": name, "description": description, "price": price, "image_url": image_url}
     product = Product(**product_data)
@@ -48,9 +49,7 @@ def read_product(product_id: int, db: Session = Depends(get_db),
 
 @router.put("/products/{product_id}", response_model=ProductSchema, tags=['Products'])
 def update_product(product_id: int, product: ProductSchema, db: Session = Depends(get_db),
-                   user_role: str = Depends(get_current_user_role)):
-    if user_role != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+                   admin: None = Depends(admin_check)):
     
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
@@ -69,9 +68,7 @@ def update_product(product_id: int, product: ProductSchema, db: Session = Depend
 
 @router.delete("/products/{product_id}", tags=['Products'])
 def delete_product(product_id: int, db: Session = Depends(get_db),
-                   user_role: str = Depends(get_current_user_role)):
-    if user_role != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to perform this action")
+                   admin: None = Depends(admin_check)):
     
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
