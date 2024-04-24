@@ -54,7 +54,6 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     
     access_token = create_access_token(data={"user_id": user.id, "role": user.role})
-    print('result: ',access_token)
     
     response_content = {'Status': 'Successfully Logged In!!!'}
     
@@ -64,7 +63,7 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
         key="token",
         value=access_token,
         httponly=True,
-        secure=True,
+        # secure=True,
         max_age=1800,
     )
     

@@ -22,15 +22,14 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_token_data(token: str = Cookie("token", secure=True, httponly=True),) -> TokenData:
+def get_token_data(token: str = Cookie(None),) -> TokenData:
     # token = request.cookies.get("access_token")
-    print("token: ", token)
-    # if not token:
-    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not authenticated!!!", headers={'WWW-Authenticate': 'Bearer'})
+    # print("token: ", token)
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id = str(payload.get('user_id'))
-        print(id)
+        # print(id)
         role = str(payload.get('role'))
         if not id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={'WWW-Authenticate': 'Bearer'})
