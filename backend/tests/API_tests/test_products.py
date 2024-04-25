@@ -1,7 +1,7 @@
-import json
 from unittest.mock import patch
 import pytest
 from fastapi import status
+from app.models.sqlalchemy_models import Product
 from app.oauth2 import create_access_token, get_token_data
 
 
@@ -64,16 +64,14 @@ def test_read_products(test_client, db_session, admin_token):
         assert "name" in products[0]
 
 
-
 def test_read_product(test_client, db_session, admin_token):
-    # Create a product in the database
     product_data = {
         "name": "Test Product",
         "description": "Test Description",
         "price": 100,
         "image_url": "shirt.jpg",
     }
-    
+
     with patch("app.oauth2.jwt.decode") as mock_jwt_decode:
         mock_jwt_decode.return_value = {"user_id": 1, "role": "admin"}
 
@@ -89,3 +87,32 @@ def test_read_product(test_client, db_session, admin_token):
     assert response.json()["price"] == product_data["price"]
     assert response.json()["image_url"] == product_data["image_url"]
 
+
+
+def test_update_product(test_client, db_session, admin_token):
+    product_id = 1
+
+    updated_product_data = {
+        "name": "Updated Test Product",
+        "description": "Updated Test Description",
+        "price": 150,
+        "image_url": "updated_test.jpg",
+    }
+
+    with patch("app.oauth2.jwt.decode") as mock_jwt_decode:
+        mock_jwt_decode.return_value = {"user_id": 1, "role": "admin"}
+
+        response = test_client.put(
+            f"/api/products/{product_id}",
+            headers={"Authorization": f"Bearer {admin_token}"},
+            json=updated_product_data,
+        )
+        print("\n\n\n\n\n", response)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    updated_product = db_session.query(Product).get(product_id)
+    assert updated_product.name == updated_product_data["name"]
+    assert updated_product.description == updated_product_data["description"]
+    assert updated_product.price == updated_product_data["price"]
+    assert updated_product.image_url == updated_product_data["image_url"]
