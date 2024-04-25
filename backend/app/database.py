@@ -5,25 +5,21 @@ from dotenv import load_dotenv
 import os
 
 
-
 load_dotenv()
 
 
-DB_HOST = os.getenv('DB_HOST')
-DB_DATABASE = os.getenv('DB_DATABASE')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv("DB_HOST")
+DB_DATABASE = os.getenv("DB_DATABASE")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 
-
-
-if 'DB_URL' in os.environ:
-    URL_DATABASE = os.environ.get('DB_URL') 
+if "DB_URL" in os.environ:
+    URL_DATABASE = os.environ.get("DB_URL")
 else:
-    URL_DATABASE = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_DATABASE}'
-    
-Dummy_URL_DATABASE = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/dummy'
+    URL_DATABASE = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_DATABASE}"
 
+Dummy_URL_DATABASE = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/dummy"
 
 
 engine = create_engine(URL_DATABASE)
@@ -38,9 +34,9 @@ Dummy_SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=dummy_
 Base = declarative_base()
 Dummy_Base = declarative_base()
 
+
 def create_all_tables():
     Base.metadata.create_all(bind=engine)
-
 
 
 def get_db():

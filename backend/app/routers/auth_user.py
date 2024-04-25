@@ -13,52 +13,76 @@ import json
 router = APIRouter()
 
 
-
-
-@router.post('/create-user', status_code=status.HTTP_201_CREATED, tags=['Authentication'], response_model=UserCreate)
-def create_user(email: str = Form(...), password: str = Form(...),role: str = Form(...) , db: Session = Depends(get_db)):
+@router.post(
+    "/create-user",
+    status_code=status.HTTP_201_CREATED,
+    tags=["Authentication"],
+    response_model=UserCreate,
+)
+def create_user(
+    email: str = Form(...),
+    password: str = Form(...),
+    role: str = Form(...),
+    db: Session = Depends(get_db),
+):
     if db.query(User).filter(User.email == email).first():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
+        )
 
     hashed_password = hash_password(password)
-    user_data = {'email': email, 'password': hashed_password, 'role': role}
+    user_data = {"email": email, "password": hashed_password, "role": role}
     user = User(**user_data)
 
     db.add(user)
     db.commit()
     db.refresh(user)
 
-    return user 
-
-@router.get('/user/{id}', status_code=status.HTTP_200_OK, tags=['Authentication'], response_model=UserCreate)
-def get_user(id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == id).first()
-    
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {id} does not exist")
-    
     return user
 
 
+@router.get(
+    "/user/{id}",
+    status_code=status.HTTP_200_OK,
+    tags=["Authentication"],
+    response_model=UserCreate,
+)
+def get_user(id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == id).first()
 
-
-
-@router.post('/login', status_code=status.HTTP_202_ACCEPTED, tags=['Authentication'])
-def login(email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == email).first()
-    
     if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id: {id} does not exist",
+        )
+
+    return user
+
+
+@router.post("/login", status_code=status.HTTP_202_ACCEPTED, tags=["Authentication"])
+def login(
+    email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials"
+        )
+
     if not verify_password(password, user.password):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
-    
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials"
+        )
+
     access_token = create_access_token(data={"user_id": user.id, "role": user.role})
-    
-    response_content = {'Status': 'Successfully Logged In!!!'}
-    
-    response = Response(content=json.dumps(response_content), media_type='application/json')
-    
+
+    response_content = {"Status": "Successfully Logged In!!!"}
+
+    response = Response(
+        content=json.dumps(response_content), media_type="application/json"
+    )
+
     response.set_cookie(
         key="token",
         value=access_token,
@@ -66,7 +90,5 @@ def login(email: str = Form(...), password: str = Form(...), db: Session = Depen
         # secure=True,
         max_age=1800,
     )
-    
+
     return response
-
-

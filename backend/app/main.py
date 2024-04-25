@@ -8,8 +8,6 @@ from app.cors import cors_middleware
 from dotenv import load_dotenv
 
 
-
-
 load_dotenv()
 
 
@@ -21,9 +19,6 @@ app.add_middleware(cors_middleware)
 
 # Initialize database
 create_all_tables()
-
-
-
 
 
 # Routers

@@ -4,6 +4,7 @@ from app.models import Product
 
 router = APIRouter()
 
+
 @router.post("/order/", response_model=List[Product])
 def place_order():
     global cart_items

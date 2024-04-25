@@ -6,14 +6,17 @@ router = APIRouter()
 
 cart_items = []
 
+
 @router.post("/cart/add/", response_model=List[Product])
 def add_to_cart(product: Product):
     cart_items.append(product)
     return cart_items
 
+
 @router.get("/cart/", response_model=List[Product])
 def view_cart():
     return cart_items
+
 
 @router.delete("/cart/remove/{product_id}", response_model=List[Product])
 def remove_from_cart(product_id: int):

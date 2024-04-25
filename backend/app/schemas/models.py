@@ -1,6 +1,6 @@
 import datetime
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 
 class Product(BaseModel):
@@ -11,20 +11,16 @@ class Product(BaseModel):
     image_url: Optional[str]
     created_at: datetime.datetime
 
-    class Config:
-        from_attributes = True
+    ConfigDict: Dict[str, bool] = {"allow_mutation": False}
 
 
 class Cart(BaseModel):
     items: List[Product]
 
-    class Config:
-        from_attributes = True
+    ConfigDict: Dict[str, bool] = {"allow_mutation": False}
 
 
 class Order(BaseModel):
     products: List[Cart]
 
-    class Config:
-        from_attributes = True
-
+    ConfigDict: Dict[str, bool] = {"allow_mutation": False}
