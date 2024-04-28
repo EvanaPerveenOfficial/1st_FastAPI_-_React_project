@@ -19,20 +19,13 @@ if "DB_URL" in os.environ:
 else:
     URL_DATABASE = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_DATABASE}"
 
-Dummy_URL_DATABASE = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/dummy"
-
 
 engine = create_engine(URL_DATABASE)
-dummy_engine = create_engine(Dummy_URL_DATABASE)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Dummy_SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=dummy_engine)
-
-
 Base = declarative_base()
-Dummy_Base = declarative_base()
 
 
 def create_all_tables():

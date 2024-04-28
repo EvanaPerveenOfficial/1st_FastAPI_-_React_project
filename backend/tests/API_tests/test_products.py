@@ -1,8 +1,10 @@
+import json
 from unittest.mock import patch
 import pytest
 from fastapi import status
 from app.models.sqlalchemy_models import Product
 from app.oauth2 import create_access_token, get_token_data
+
 
 
 @pytest.fixture
@@ -88,15 +90,19 @@ def test_read_product(test_client, db_session, admin_token):
     assert response.json()["image_url"] == product_data["image_url"]
 
 
-
 def test_update_product(test_client, db_session, admin_token):
     product_id = 1
+    existing_product = db_session.get(Product, product_id)
+    
+    # print("\n\n\n\n", existing_product.created_at)
 
     updated_product_data = {
+        "id": product_id, 
         "name": "Updated Test Product",
         "description": "Updated Test Description",
         "price": 150,
         "image_url": "updated_test.jpg",
+        "created_at": existing_product.created_at.isoformat(), 
     }
 
     with patch("app.oauth2.jwt.decode") as mock_jwt_decode:
@@ -107,12 +113,13 @@ def test_update_product(test_client, db_session, admin_token):
             headers={"Authorization": f"Bearer {admin_token}"},
             json=updated_product_data,
         )
-        print("\n\n\n\n\n", response)
+        # print("\n\n\n\n\n", updated_product_data)
 
     assert response.status_code == status.HTTP_200_OK
 
-    updated_product = db_session.query(Product).get(product_id)
+    updated_product = db_session.get(Product, product_id) 
     assert updated_product.name == updated_product_data["name"]
     assert updated_product.description == updated_product_data["description"]
     assert updated_product.price == updated_product_data["price"]
     assert updated_product.image_url == updated_product_data["image_url"]
+    assert updated_product.created_at == existing_product.created_at

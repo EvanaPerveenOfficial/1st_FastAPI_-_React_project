@@ -1,10 +1,10 @@
 from app.routers.auth_user import create_access_token
 from fastapi import status
-import uuid
+
 
 
 def test_create_user(test_client, db_session):
-    email = f"test_{uuid.uuid4()}@gmail.com"
+    email = "test@example.com"
     password = "testpassword"
     role = "admin"
 
@@ -53,7 +53,7 @@ def test_get_user_existing(test_client, db_session):
     user_data = {
         "email": "test@example.com",
         "password": "testpassword",
-        "role": "client",
+        "role": "admin",
     }
     response = test_client.get("/auth/user/1")
     response_json = response.json()

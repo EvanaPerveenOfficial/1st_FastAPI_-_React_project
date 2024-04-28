@@ -1,11 +1,30 @@
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import Dummy_SessionLocal, dummy_engine, get_db
+from app.database import get_db
 from app.models.sqlalchemy_models import Base
 from unittest.mock import patch
 
-from app.oauth2 import get_token_data
+from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+
+DB_HOST = os.getenv("DB_HOST")
+DB_DATABASE = os.getenv("DB_DATABASE")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+
+Dummy_URL_DATABASE = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/dummy"
+dummy_engine = create_engine(Dummy_URL_DATABASE)
+Dummy_SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=dummy_engine)
+Dummy_Base = declarative_base()
 
 
 @pytest.fixture(scope="session")
@@ -40,3 +59,11 @@ def mock_jwt_decode():
     with patch("app.oauth2.jwt.decode") as mock_decode:
         mock_decode.return_value = {"user_id": 1, "role": "admin"}
         yield mock_decode
+
+
+@pytest.fixture(scope="session", autouse=True)
+def drop_tables_after_test_session(request, test_db):
+    def drop_tables():
+        Base.metadata.drop_all(bind=dummy_engine)
+
+    request.addfinalizer(drop_tables)
