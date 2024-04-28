@@ -18,3 +18,4 @@ env/
 
 # Dependency directories
 node_modules/
+pg_data/
