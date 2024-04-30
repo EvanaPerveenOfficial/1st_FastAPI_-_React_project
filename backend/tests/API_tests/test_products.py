@@ -1,4 +1,4 @@
-import json
+
 from unittest.mock import patch
 import pytest
 from fastapi import status
@@ -148,3 +148,4 @@ def test_delete_product_non_existing(test_client, db_session, admin_token):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["detail"] == "Product not found"
+

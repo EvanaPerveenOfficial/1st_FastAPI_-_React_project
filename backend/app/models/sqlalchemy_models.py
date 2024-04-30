@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Table, TIMESTAMP, text
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, TIMESTAMP, func, text
 from app.database import Base
 from sqlalchemy.orm import relationship
 
@@ -11,9 +11,10 @@ class Product(Base):
     description = Column(String, index=True)
     price = Column(Integer, index=True)
     image_url = Column(String, index=True)
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
+    # created_at = Column(
+    #     TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    # )
+    created_at = Column(TIMESTAMP, default=func.now(), nullable=False)
 
     orders = relationship(
         "Order", secondary="order_products", back_populates="products"
@@ -49,9 +50,10 @@ class Order(Base):
     products = relationship(
         "Product", secondary="order_products", back_populates="orders"
     )
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
+    # created_at = Column(
+    #     TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    # )
+    created_at = Column(TIMESTAMP, default=func.now(), nullable=False)
 
 
 order_products = Table(
@@ -69,6 +71,7 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     role = Column(String, nullable=False, default="client")
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
+    # created_at = Column(
+    #     TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    # )
+    created_at = Column(TIMESTAMP, default=func.now(), nullable=False)

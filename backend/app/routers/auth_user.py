@@ -59,7 +59,7 @@ def get_user(id: int, db: Session = Depends(get_db)):
     return user
 
 
-@router.post("/login", status_code=status.HTTP_202_ACCEPTED, tags=["Authentication"])
+@router.post("/login", status_code=status.HTTP_200_OK, tags=["Authentication"])
 def login(
     email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)
 ):
