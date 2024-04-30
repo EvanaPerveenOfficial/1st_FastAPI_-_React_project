@@ -15,39 +15,23 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 180
 
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
+def create_access_token(data: dict, secret_key: str = SECRET_KEY) -> str:
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    to_encode = {**data, "exp": expire}
+    return jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
 
 
-def get_token_data(
-    token: str = Cookie(None),
-) -> TokenData:
-    # token = request.cookies.get("access_token")
-    # print("token: ", token)
-
+def get_token_data(token: str = Cookie(None)) -> TokenData:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id = str(payload.get("user_id"))
-        # print(id)
-        role = str(payload.get("role"))
-        if not id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        return TokenData(id=id, role=role)
+        return TokenData(id=str(payload.get("user_id")), role=str(payload.get("role")))
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    except jwt.JWTError:
+    except (jwt.JWTError, KeyError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -55,9 +39,9 @@ def get_token_data(
         )
 
 
-def get_current_user(token: TokenData = Depends(get_token_data)):
-    return token.id
+def get_current_user(token_data: TokenData = Depends(get_token_data)) -> str:
+    return token_data.id
 
 
-def get_current_user_role(token_data: TokenData = Depends(get_token_data)):
+def get_current_user_role(token_data: TokenData = Depends(get_token_data)) -> str:
     return token_data.role

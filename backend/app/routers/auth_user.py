@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import Response
+import json
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Form
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.sqlalchemy_models import User
-from app.schemas.auth_models import UserCreate
-from fastapi import Form
-from app.utils import hash_password, verify_password
-from ..oauth2 import create_access_token
-import json
+from app.schemas.auth_models import UserCreate, UserInResponse
+from app.utils import async_hash_password, verify_password
+from app.oauth2 import create_access_token
 
 
 router = APIRouter()
@@ -17,9 +16,9 @@ router = APIRouter()
     "/create-user",
     status_code=status.HTTP_201_CREATED,
     tags=["Authentication"],
-    response_model=UserCreate,
+    response_model=UserInResponse,
 )
-def create_user(
+async def create_user(
     email: str = Form(...),
     password: str = Form(...),
     role: str = Form(...),
@@ -30,7 +29,7 @@ def create_user(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
         )
 
-    hashed_password = hash_password(password)
+    hashed_password = await async_hash_password(password)
     user_data = {"email": email, "password": hashed_password, "role": role}
     user = User(**user_data)
 
@@ -45,9 +44,9 @@ def create_user(
     "/user/{id}",
     status_code=status.HTTP_200_OK,
     tags=["Authentication"],
-    response_model=UserCreate,
+    response_model=UserInResponse,
 )
-def get_user(id: int, db: Session = Depends(get_db)):
+async def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == id).first()
 
     if not user:

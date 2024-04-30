@@ -1,35 +1,36 @@
 from pydantic import BaseModel, EmailStr
-import datetime
+from datetime import datetime
 from typing import Optional
-from typing import Dict
 
 
-class UserCreate(BaseModel):
-    id: int
+class Config:
+    allow_mutation = False
+
+
+class UserBase(BaseModel):
     email: EmailStr
-    created_at: datetime.datetime
 
-    # class Config:
-    #     from_attributes = True
-    ConfigDict: Dict[str, bool] = {"allow_mutation": False}
+
+class UserCreate(UserBase):
+    id: Optional[int]
+    created_at: Optional[datetime]
+
+
+class UserInResponse(UserBase):
+    id: int
+    created_at: datetime
 
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-    ConfigDict: Dict[str, bool] = {"allow_mutation": False}
-
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
-    ConfigDict: Dict[str, bool] = {"allow_mutation": False}
-
 
 class TokenData(BaseModel):
     id: Optional[str] = None
     role: Optional[str] = None
-
-    ConfigDict: Dict[str, bool] = {"allow_mutation": False}

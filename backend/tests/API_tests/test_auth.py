@@ -2,7 +2,6 @@ from app.routers.auth_user import create_access_token
 from fastapi import status
 
 
-
 def test_create_user(test_client, db_session):
     email = "test@example.com"
     password = "testpassword"
