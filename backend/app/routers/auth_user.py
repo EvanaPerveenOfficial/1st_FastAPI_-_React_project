@@ -1,13 +1,14 @@
 import json
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Form
+
+from fastapi import APIRouter, Depends, Form, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app.models.sqlalchemy_models import User
+from app.oauth2 import create_access_token
 from app.schemas.auth_models import UserCreate, UserInResponse
 from app.utils import async_hash_password, verify_password
-from app.oauth2 import create_access_token
-
 
 router = APIRouter()
 

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, status, Form
+from fastapi import APIRouter, Depends, Form, HTTPException, status
 from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app.models.sqlalchemy_models import Product
-from app.schemas.models import Product as ProductSchema
 from app.oauth2 import get_current_user_role
+from app.schemas.models import Product as ProductSchema
 
 router = APIRouter()
 
