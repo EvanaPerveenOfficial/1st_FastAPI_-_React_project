@@ -8,10 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.sqlalchemy_models import User
 from app.oauth2 import create_access_token
-from app.schemas.auth_models import UserCreate, UserInResponse
+from app.schemas.auth_models import UserInResponse
 from app.utils import async_hash_password, verify_password
 
 router = APIRouter()
+
 
 @router.post(
     "/create-user",
@@ -28,9 +29,7 @@ async def create_user(
     try:
         print(f"Received email: {email}, password: {password}, role: {role}")
 
-        existing_user = await db.execute(
-            select(User).where(User.email == email)
-        )
+        existing_user = await db.execute(select(User).where(User.email == email))
         if existing_user.scalar():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
@@ -51,6 +50,7 @@ async def create_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create user: {str(e)}",
         )
+
 
 @router.get(
     "/user/{id}",
@@ -73,6 +73,7 @@ async def get_user(id: int, db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to get user: {str(e)}",
         )
+
 
 @router.post("/login", status_code=status.HTTP_200_OK, tags=["Authentication"])
 async def login(

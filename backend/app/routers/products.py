@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Form, HTTPException, status
-from sqlalchemy.orm import Session
 from sqlalchemy.future import select
+from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.sqlalchemy_models import Product
@@ -48,7 +48,9 @@ async def read_products(
     limit: int = 25,
     db: Session = Depends(get_db),
 ):
-    products = await db.execute(select(Product).order_by(Product.id).offset(skip).limit(limit))
+    products = await db.execute(
+        select(Product).order_by(Product.id).offset(skip).limit(limit)
+    )
     return products.scalars().all()
 
 
