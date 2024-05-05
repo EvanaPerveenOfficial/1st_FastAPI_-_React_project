@@ -85,8 +85,6 @@ async def login(
         user = await db.execute(select(User).filter(User.email == email))
         user = user.scalar_one()
 
-        print("Retrieved user:", user)
-
         if not user or not verify_password(password, user.password):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials"

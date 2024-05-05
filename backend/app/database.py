@@ -22,7 +22,7 @@ else:
 
 engine = create_async_engine(
     URL_DATABASE,
-    echo=True,
+    echo=False,
     future=True,
     pool_size=20,
 )

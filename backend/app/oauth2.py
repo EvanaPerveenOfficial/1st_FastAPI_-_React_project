@@ -24,7 +24,6 @@ def create_access_token(data: dict, secret_key: str = SECRET_KEY) -> str:
 
 
 def get_token_data(token: str = Cookie(None)) -> TokenData:
-    print(token)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return TokenData(id=str(payload.get("user_id")), role=str(payload.get("role")))
