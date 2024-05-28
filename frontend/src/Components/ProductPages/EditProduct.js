@@ -54,7 +54,7 @@ const EditProduct = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token.myToken}`
+                    // Authorization: `Bearer ${token.myToken}`
                 },
                 body: JSON.stringify(productData)
             });
